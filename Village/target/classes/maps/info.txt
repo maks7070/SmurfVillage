@@ -1,0 +1,7 @@
+grass - 0
+wall - 1
+water - 2
+earth - 3
+tree - 4
+sand - 5
+hut - 6
