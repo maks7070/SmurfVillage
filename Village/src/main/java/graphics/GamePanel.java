@@ -1,15 +1,18 @@
 package graphics;
 
+import buildings.House;
 import entities.Smurf;
-import handlers.KeyHandler;
+import entities.SmurfDelivery;
+import entities.SmurfFarmer;
 import handlers.TileMouseListener;
-import task_routes.Route;
-import tile.DataTile;
+import task_routes.FarmerRoute;
+import task_routes.WariorRoute;
+import task_routes.WoodRoute;
 import tile.TileManager;
 
 import javax.swing.*;
-import javax.xml.crypto.Data;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements Runnable
 {
@@ -24,25 +27,28 @@ public class GamePanel extends JPanel implements Runnable
     public final int screenHeight = tileSize * maxScreenRow; // 567px
 
     int FPS = 60;
-
+    Village village = new Village();
     TileManager tileM = new TileManager(this);
-    KeyHandler keyH= new KeyHandler();
     Thread gameThread;
     //TODO
-    DataTile t1 = new DataTile(1,1);
-    DataTile t2 = new DataTile(1,2);
-    Route r = new Route(t1,t2);
-    Smurf player = new Smurf(this, keyH,r);
+
+    ArrayList<Smurf> smurfs;
+
+
+
+
+    SmurfDelivery sf = new SmurfDelivery(this, new FarmerRoute(), "wheat", village.getHouses().get(0), village.getHq());
+    SmurfDelivery sd1 = new SmurfDelivery(this, new WoodRoute(), "coal", village.getHouses().get(0), village.getHq());
+    SmurfFarmer sw = new SmurfFarmer(this, new WariorRoute(), village.getHouses().get(0));
+
+
+
 
 
     TileMouseListener listener = new TileMouseListener();
 
 
-    //entities.Player default position:
 
-    int playerX = 100;
-    int playerY = 100;
-    int playerSpeed = 4;
 
 
     public GamePanel()
@@ -50,9 +56,15 @@ public class GamePanel extends JPanel implements Runnable
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
-        this.addKeyListener(keyH);
         this.setFocusable(true);
         this.addMouseListener(listener);
+
+        smurfs = new ArrayList<>();
+        smurfs.add(sf);
+        smurfs.add(sw);
+        smurfs.add(sd1);
+
+
 
     }
 
@@ -88,7 +100,7 @@ public class GamePanel extends JPanel implements Runnable
 
             if(timer >= 1000000000)
             {
-                System.out.println("FPS:" + drawCount);
+                //System.out.println("FPS:" + drawCount);
                 drawCount = 0;
                 timer = 0;
             }
@@ -97,7 +109,17 @@ public class GamePanel extends JPanel implements Runnable
 
     public void update()
     {
-        player.update();
+        //sf.update();
+
+        for(Smurf s : smurfs){
+            s.update();
+        }
+
+        for(House h : village.houses){
+            System.out.println(h.getResources());
+        }
+        System.out.println("Coal: " + village.getHq().getCoal());
+        System.out.println("Wheat: " + village.getHq().getWheat());
     }
 
 
@@ -107,7 +129,10 @@ public class GamePanel extends JPanel implements Runnable
         Graphics2D g2 = (Graphics2D) g;
         tileM.draw(g2);
 
-        player.draw(g2);
+        for(Smurf s: smurfs)
+        {
+            s.draw(g2);
+        }
 
 
         g2.dispose();

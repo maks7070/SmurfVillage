@@ -19,7 +19,10 @@ public class TileMouseListener implements MouseListener
         int tileY = clickY / tileSize;
 
         if(tileX >= 0 && tileX < columns && tileY >= 0 && tileY < rows){
-
+            System.out.println("Location");
+            System.out.println(tileX);
+            System.out.println(tileY);
+            System.out.println("__________________________");
         }
     }
 

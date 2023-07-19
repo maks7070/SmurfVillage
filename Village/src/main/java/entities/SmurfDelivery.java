@@ -1,24 +1,31 @@
 package entities;
 
+import buildings.House;
+import buildings.MainBuilding;
 import graphics.GamePanel;
 import task_routes.FarmerRoute;
 import task_routes.Route;
-import tile.DataTile;
 
-public class SmurfFarmer extends Smurf
+public class SmurfDelivery extends Smurf
 {
 
     private int resources;
     private boolean toMagazine;
 
+    House house;
+    MainBuilding mb;
 
-    int intersectionTopY;
+    String type;
 
-    public SmurfFarmer(GamePanel gp, FarmerRoute route) {
+    public SmurfDelivery(GamePanel gp, Route route, String type, House h, MainBuilding mb) {
         super(gp, route);
+        this.type = type;
         resources = 0;
         toMagazine = true;
         setStartingLocation();
+        this.house = h;
+        this.mb = mb;
+
 
 
 
@@ -38,18 +45,20 @@ public class SmurfFarmer extends Smurf
 
     @Override
     public void update() {
-        if(toMagazine)
+        if(type.equals("wheat"))
         {
-            if(whichWay.equals("N")){
-                direction = "up";
-                y -= speed;
+            if(toMagazine)
+            {
+                if(whichWay.equals("N")){
+                    direction = "up";
+                    y -= speed;
 
-                if(y <= 288 && y >= 240)
-                {
-                    whichWay = "E";
-                }
+                    if(y <= 288 && y >= 240)
+                    {
+                        whichWay = "E";
+                    }
 
-            }if(whichWay.equals("E")){
+                }if(whichWay.equals("E")){
                 direction = "right";
                 x += speed;
                 if(x >= 1008 && x <= 1056)
@@ -61,41 +70,106 @@ public class SmurfFarmer extends Smurf
                 }
             }
 
-        }
-        else{
-            if(whichWay.equals("W"))
-            {
-                direction = "left";
-                x -= speed;
-
-                if(x <= 240 && y >= 192)
+            }
+            else{
+                if(whichWay.equals("W"))
                 {
-                    whichWay = "S";
-                }
-            }if(whichWay.equals("S"))
-            {
-                direction = "down";
-                y += speed;
-
-                if(y >= 432 && y <= 480)
-                {
-                    toMagazine = true;
                     direction = "left";
+                    x -= speed;
+
+                    if(x <= 240 && x >= 192)
+                    {
+                        whichWay = "S";
+                    }
+                }if(whichWay.equals("S"))
+                {
+                    direction = "down";
+                    y += speed;
+
+                    if(y >= 432 && y <= 480)
+                    {
+                        toMagazine = true;
+                        direction = "left";
+                        spriteNum = 1;
+                        whichWay = "N";
+                        mb.updateResource(5, type);
+                    }
+                }
+
+
+            }
+            spriteCounter++;
+            if (spriteCounter > 10) {
+                if (spriteNum == 1) {
+                    spriteNum = 2;
+                } else if (spriteNum == 2) {
                     spriteNum = 1;
-                    whichWay = "N";
+                }
+                spriteCounter = 0;
+            }
+        }
+        else if(type.equals("coal"))
+        {
+            if(toMagazine)
+            {
+                if(whichWay.equals("N")){
+                    direction = "up";
+                    y -= speed;
+
+                    if(y <= 288 && y >= 240)
+                    {
+                        whichWay = "E";
+                    }
+
+                }if(whichWay.equals("E")){
+                direction = "right";
+                x += speed;
+                if(x >= 1008 && x <= 1056)
+                {
+                    toMagazine = false;
+                    direction = "up";
+                    spriteNum = 1;
+                    whichWay = "W";
                 }
             }
 
-
-        }
-        spriteCounter++;
-        if (spriteCounter > 10) {
-            if (spriteNum == 1) {
-                spriteNum = 2;
-            } else if (spriteNum == 2) {
-                spriteNum = 1;
             }
-            spriteCounter = 0;
+            else{
+                if(whichWay.equals("W"))
+                {
+                    direction = "left";
+                    x -= speed;
+
+                    if(x >= 624 && x <= 672)
+                    {
+                        whichWay = "S";
+                    }
+                }if(whichWay.equals("S"))
+                {
+                    direction = "down";
+                    y += speed;
+
+                    if(y >= 432 && y <= 480)
+                    {
+                        toMagazine = true;
+                        direction = "down";
+                        spriteNum = 1;
+                        whichWay = "N";
+                        mb.updateResource(5, type);
+                    }
+                }
+
+
+            }
+            spriteCounter++;
+            if (spriteCounter > 10) {
+                if (spriteNum == 1) {
+                    spriteNum = 2;
+                } else if (spriteNum == 2) {
+                    spriteNum = 1;
+                }
+                spriteCounter = 0;
+            }
         }
     }
 
